@@ -1,6 +1,11 @@
 #include <iostream>
 #include "./lib/ibpp/core/ibpp.h"
 #include <iconv.h>
+#include "include/json.hpp"
+
+
+using jsoncons::null_type;
+using jsoncons::json;
 
 using namespace std;
 
@@ -28,14 +33,19 @@ int main()
 	  std::cout<<"Connected. Now disconnecting...\r\n";
 	  IBPP::Statement st1 = IBPP::StatementFactory(db1, tr1);
 	  st1->Execute("SELECT MEM_ID, MEM_NAME FROM LINE");
+
+	  json articles;
 	  while(st1->Fetch())
 	    {
 	      std::string mem_name;
 	      int mem_id;
 	      st1->Get(1, &mem_id);
 	      st1->Get(2, mem_name);
-	      std::cout<<mem_id<<'\t'<<iconv_recode("CP1251", "UTF-8", mem_name)<<std::endl;
+	      //std::cout<<mem_id<<'\t'<<iconv_recode("CP1251", "UTF-8", mem_name)<<std::endl;
+
+	      articles[iconv_recode("CP1251", "UTF-8", mem_name)] = mem_id;
 	    }
+	  std::cout<<pretty_print(articles);
 	  
 	  tr1->CommitRetain();
 	  db1->Disconnect();
