@@ -15,9 +15,9 @@ int main()
 
 {
 	  std::string ServerName = "localhost";
-	  std::string DbName = "MYDB_ZHENIA";
+	  std::string DbName = "MYDB";
 	  std::string UserName = "SYSDBA";
-	  std::string Password = "illicive";
+	  std::string Password = "7ea9f10f";
 	  std::string Role = "ADMIN";
 	  std::string Charset = "WIN1251";
 	  std::string Params = "";
