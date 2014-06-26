@@ -98,5 +98,6 @@ chart = new Highcharts.Chart({
         data: []	
      }]
   });
+   $('select#daterange').change(function() {requestData();});
   });
 })(window, document)

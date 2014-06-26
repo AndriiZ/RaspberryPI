@@ -14,7 +14,7 @@
 
   <div>
   Select time range
-   <select id="daterange" onchange="requestData()">
+   <select id="daterange"">
      <option value="today">Today</option>
      <option value="dbn">Last day</option>
      <option value="wtn">Last week</option>
