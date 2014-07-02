@@ -8,8 +8,8 @@ function drawCurrent(data)
     if (data.count > 0)
     {
        lasttime = data.humidity[data.count-1][0];
-       document.querySelector("span#temperature").innerHTML = data.temperature[0][1];
-       document.querySelector("span#humidity").innerHTML = data.humidity[0][1];
+       document.querySelector("span#temperature").innerHTML = data.temperature[data.count-1][1];
+       document.querySelector("span#humidity").innerHTML = data.humidity[data.count-1][1];
        var date = new Date(lasttime);
        document.querySelector("span#time").innerHTML = date.toTimeString();
     }
