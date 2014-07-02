@@ -1,5 +1,6 @@
 <html>
 <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
   <title>Weather</title>
   <script src="/js/jquery-2.1.1.min.js"></script>
   <script src="/js/highcharts.js"></script>
