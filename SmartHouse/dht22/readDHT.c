@@ -96,8 +96,12 @@ int readDHT(int type, int pin) {
   data[0] = data[1] = data[2] = data[3] = data[4] = 0;
 
   // wait for pin to drop?
+  int cnt = 0;
   while (bcm2835_gpio_lev(pin) == 1) {
+    cnt++;
     usleep(1);
+    if (cnt == 1000)
+      break;
   }
 
   // read data!
@@ -133,7 +137,6 @@ int readDHT(int type, int pin) {
 #endif
 
 //  printf("Data (%d): 0x%x 0x%x 0x%x 0x%x 0x%x\n", j, data[0], data[1], data[2], data[3], data[4]);
-
   if ((j >= 39) &&
       (data[4] == ((data[0] + data[1] + data[2] + data[3]) & 0xFF)) ) {
      // yay!
