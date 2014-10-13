@@ -1,5 +1,27 @@
 #include <stdio.h>
 #include <sqlite3.h>
+#include <ctime>
+#include <cerrno>
+
+void usleep(unsigned msec) {
+    struct timespec req, rem;
+    int err;
+    req.tv_sec = msec / 1000;
+    req.tv_nsec = (msec % 1000) * 1000000;
+    while ((req.tv_sec != 0) || (req.tv_nsec != 0)) {
+        if (nanosleep(&req, &rem) == 0)
+            break;
+        err = errno;
+        // Interrupted; continue
+        if (err == EINTR) {
+            req.tv_sec = rem.tv_sec;
+            req.tv_nsec = rem.tv_nsec;
+        }
+        // Unhandleable error (EFAULT (bad pointer), EINVAL (bad timeval in tv_nsec), or ENOSYS (function not supported))
+        break;
+    }
+}
+
 
 sqlite3 *conn;
 
@@ -81,17 +103,36 @@ int saveToDB(float temperature, float pressure)
 
   sqlite3_stmt *stmt;
 
-  if ( sqlite3_prepare(
-         conn, 
-         "insert into weather_bmp180 values (CURRENT_TIMESTAMP, ?,?)",  // stmt
-        -1, // If than zero, then stmt is read up to the first nul terminator
-        &stmt,
-         0  // Pointer to unused portion of stmt
-       )
-       != SQLITE_OK) {
-    printf("\nCould not prepare statement.");
-    return 1;
+  int continueTrying = 1;
+  int tryCount = 0;
+
+  while (continueTrying)
+  {
+    int retval =  sqlite3_prepare(
+           conn,
+           "insert into weather_bmp180 values (CURRENT_TIMESTAMP, ?,?)",  // stmt
+          -1, // If than zero, then stmt is read up to the first nul terminator
+          &stmt,
+           0  // Pointer to unused portion of stmt
+         );
+    switch (retval) {
+      case SQLITE_BUSY:
+        tryCount++;
+        if (tryCount > 10 * 6 * 4) {
+          printf("\nDatabase busy.");
+          return 1;
+        }
+        usleep(1000);
+        break;
+     case SQLITE_OK:
+        continueTrying = 0;
+        break;
+     default:
+        printf("\nCould not prepare statement.");
+       return 1;
+    }
   }
+
 
   if (sqlite3_bind_double(stmt,
    1,

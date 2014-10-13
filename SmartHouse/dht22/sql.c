@@ -83,16 +83,35 @@ int saveToDB(float temperature, float humidity)
 
   sqlite3_stmt *stmt;
 
-  if ( sqlite3_prepare(
-         conn, 
-         "insert into weather values (CURRENT_TIMESTAMP, ?,?)",  // stmt
-        -1, // If than zero, then stmt is read up to the first nul terminator
-        &stmt,
-         0  // Pointer to unused portion of stmt
-       )
-       != SQLITE_OK) {
-    printf("\nCould not prepare statement.");
-    return 1;
+
+  int continueTrying = 1;
+  int tryCount = 0;
+
+  while (continueTrying)
+  {
+    int retval =  sqlite3_prepare(
+           conn, 
+           "insert into weather values (CURRENT_TIMESTAMP, ?,?)",  // stmt
+          -1, // If than zero, then stmt is read up to the first nul terminator
+          &stmt,
+           0  // Pointer to unused portion of stmt
+         );
+    switch (retval) {
+      case SQLITE_BUSY:
+        tryCount++;
+        if (tryCount > 10 * 6 * 4) {
+          printf("\nDatabase busy.");
+          return 1;
+        }
+        usleep(1000);
+        break;
+     case SQLITE_OK:
+	continueTrying = 0;
+        break;
+     default:
+        printf("\nCould not prepare statement.");
+       return 1;
+    }
   }
 
   if (sqlite3_bind_double(stmt,
