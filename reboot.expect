@@ -1,0 +1,16 @@
+#!/usr/bin/expect -f
+
+spawn telnet 192.168.1.100
+
+expect {
+    "DSL-N16U login:" {
+        send "admin\n"
+        expect "Password:"
+        send "xxxxxxxxxxxxxxxxxxxxx\n"
+        expect "#"
+        send "reboot\n"
+        expect "# Connection closed by foreign host."
+    }
+}
+
+interact
