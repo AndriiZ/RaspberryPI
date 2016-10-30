@@ -18,7 +18,7 @@ int main()
   auto readings = bmp180.getBoth();
   //std::cout<<readings.celcius<<std::endl;
   //std::cout<<readings.kPa<<std::endl;  
-  saveToDB(readings.celcius, readings.kPa);
+  //saveToDB(readings.celcius, readings.kPa);
   postWeather(readings.celcius, readings.kPa, "70528E8C-3467-48CD-BDD4-61D509839397");
   //std::cout<<"done"<<std::endl;
   return 0;

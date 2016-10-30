@@ -152,7 +152,7 @@ int readDHT(int type, int pin) {
         f /= 10.0;
         if (data[2] & 0x80)  f *= -1;
 	printf("Temp =  %.1f *C, Hum = %.1f \%\n", f, h);
-	saveToDB(f,h);
+	//saveToDB(f,h);
         postWeather(f, h, "1A57F3B1-252F-4332-872D-C23DA809F287");
     }
     return 0;
